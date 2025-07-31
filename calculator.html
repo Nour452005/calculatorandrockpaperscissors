@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        .calculator{
+            background-color: white;
+            width:320px
+        }
+        .screen{
+            background-color: black;
+            color: white;
+            width: calc(100% - 10px);
+            height: 100px;
+            padding: 5px;
+            text-align:right;
+            border:0;
+            font-size: 32px;
+        }
+        .calcbuttons {
+            background-color: white;
+           display:grid;
+           grid-template-columns:repeat(4,25%) ;
+           border:0;
+        }
+        .orange{
+            background-color: orange;
+
+        }
+        .btn{
+            font-size: 16px;
+            height:65px;
+            border:1px solid;
+        }
+        .btn:hover{
+            color:rgb(250, 248, 248);
+        }
+        .clear{
+            grid-column: span 2;
+        }
+        .calc-numbers{
+            background-color: black;
+            color: white;
+            width: calc(100% - 10px);
+            height: 100px;
+            padding: 5px;
+            text-align:right;
+            border:0;
+            font-size: 32px;
+        }
+        .zero{
+            grid-column:1/4;
+        }
+        
+    </style>
+</head>
+<div class="calculator">
+  <input type="text" readonly id="screen" class="calc-numbers">
+
+  <div class="calcbuttons">
+    <!-- C button resets the input -->
+    <button class="btn orange clear" onclick="clearScreen()">C</button>
+
+    <!-- ← button deletes the last digit/operator -->
+    <button class="btn orange" onclick="backspace()">&larr;</button>
+
+    <!-- Operator buttons insert symbols into the expression -->
+    <button class="btn orange" onclick="appendValue('/')">&divide;</button>
+
+    <!-- Number buttons -->
+    <button class="btn" onclick="appendValue(7)">7</button>
+    <button class="btn" onclick="appendValue(8)">8</button>
+    <button class="btn" onclick="appendValue(9)">9</button>
+
+    <!-- Multiplication operator -->
+    <button class="btn orange" onclick="appendValue('*')">x</button>
+
+    <button class="btn" onclick="appendValue(4)">4</button>
+    <button class="btn" onclick="appendValue(5)">5</button>
+    <button class="btn" onclick="appendValue(6)">6</button>
+
+    <!-- Subtraction operator -->
+    <button class="btn orange" onclick="appendValue('-')">-</button>
+
+    <button class="btn" onclick="appendValue(1)">1</button>
+    <button class="btn" onclick="appendValue(2)">2</button>
+    <button class="btn" onclick="appendValue(3)">3</button>
+
+    <!-- Addition operator -->
+    <button class="btn orange" onclick="appendValue('+')">+</button>
+
+    <!-- Zero spans two columns -->
+    <button class="btn zero" onclick="appendValue(0)">0</button>
+
+    <!-- Equal button triggers evaluation -->
+    <button class="btn orange" onclick="getAnswer()">=</button>
+  </div>
+</div>
+
+<script>
+  const screen = document.getElementById("screen");
+
+  function appendValue(n) {
+    // Prevent entering two operators in a row (like ++ or */)
+    // We check if the new character is an operator and the last character on screen is also an operator
+    // If so, we ignore this input to avoid invalid expressions
+    if (isOperator(n) && isOperator(screen.value[screen.value.length - 1])) {
+      return;
+    } else {
+      // If it's valid input (number or single operator), we append it to the current expression
+      screen.value += n;
+    }
+  }
+
+  function clearScreen() {
+    // Reset the entire screen to an empty string
+    // Useful for starting a new calculation
+    screen.value = "";
+  }
+
+  function backspace() {
+    // Remove the last character from the expression using slice()
+    // This mimics the effect of pressing a backspace key
+    screen.value = screen.value.slice(0, -1);
+  }
+
+  function getAnswer() {
+    // If the last character is an operator, evaluating would cause a syntax error
+    // So we block evaluation in such a case
+    if (isOperator(screen.value[screen.value.length - 1])) {
+      return;
+    }
+
+    // Use eval to evaluate the full expression as a string of JS code
+    // This works because arithmetic expressions are valid JS
+    // Be careful with eval in real apps due to security risks
+    screen.value = eval(screen.value);
+  }
+
+  function isOperator(c) {
+    // Logical check to see if a character is one of the 4 math operators
+    // Used in both appendValue() and getAnswer() to validate input
+    return (c === "+" || c === "-" || c === "*" || c === "/");
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rock Paper Scissors</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #ffecd2, #fcb69f);
+            text-align: center;
+            padding: 50px;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        #choices {
+            margin: 20px 0;
+        }
+
+        #choices button {
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 1.2em;
+            background-color: #fff;
+            border: 2px solid #333;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        #choices button:hover {
+            transform: scale(1.1);
+            background-color: #f5f5f5;
+        }
+
+        #results {
+            margin-top: 30px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #results p, #results h3 {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        #results-message {
+            margin-top: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        #playAgainBtn {
+            display: none;
+            margin-top: 20px;
+            padding: 12px 25px;
+            font-size: 1em;
+            border: none;
+            background-color: #333;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        #playAgainBtn:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rock Paper Scissors</h1>
+
+    <div id="choices">
+        <button onclick="play('Rock')">Rock</button>
+        <button onclick="play('Paper')">Paper</button>
+        <button onclick="play('Scissors')">Scissors</button>
+    </div>
+
+    <div id="results">
+        <h3>Score</h3>
+        <p>User: <span id="userScore">0</span></p>
+        <p>AI: <span id="aiScore">0</span></p>
+        <p>Draws: <span id="draws">0</span></p>
+        <p id="results-message"></p>
+        <button id="playAgainBtn" onclick="resetGame()">Play Again</button>
+    </div>
+
+    <script>
+        let userScore = 0;
+        let aiScore = 0;
+        let draws = 0;
+        let gameOver = false;
+
+        function play(userChoice) {
+            if (gameOver) return;
+
+            const aiChoice = getAIChoice();
+            const result = determineWinner(userChoice, aiChoice);
+            updateScores(result);
+            displayResults(userChoice, aiChoice, result);
+
+            checkForWinner();
+        }
+
+        function checkForWinner() {
+            const resultMessage = document.getElementById("results-message");
+
+            if (userScore === 5) {
+                resultMessage.textContent = "🎉 You win the game!";
+                gameOver = true;
+                document.getElementById("playAgainBtn").style.display = "inline-block";
+            } else if (aiScore === 5) {
+                resultMessage.textContent = "💻 AI wins the game!";
+                gameOver = true;
+                document.getElementById("playAgainBtn").style.display = "inline-block";
+            }
+        }
+
+        function displayResults(userChoice, aiChoice, result) {
+            const resultMessage = document.getElementById("results-message");
+            let message = `You played ${userChoice}, AI played ${aiChoice}. `;
+
+            if (result === "user") {
+                message += "You win this round!";
+            } else if (result === "ai") {
+                message += "AI wins this round.";
+            } else {
+                message += "It's a draw.";
+            }
+
+            resultMessage.textContent = message;
+        }
+
+        function determineWinner(userChoice, aiChoice) {
+            if (userChoice === aiChoice) {
+                return "draw";
+            }
+            if (
+                (userChoice === "Rock" && aiChoice === "Scissors") ||
+                (userChoice === "Paper" && aiChoice === "Rock") ||
+                (userChoice === "Scissors" && aiChoice === "Paper")
+            ) {
+                return "user";
+            }
+            return "ai";
+        }
+
+        function updateScores(result) {
+            if (result === "user") {
+                userScore++;
+                document.getElementById("userScore").textContent = userScore;
+            } else if (result === "ai") {
+                aiScore++;
+                document.getElementById("aiScore").textContent = aiScore;
+            } else {
+                draws++;
+                document.getElementById("draws").textContent = draws;
+            }
+        }
+
+        function getAIChoice() {
+            const choices = ["Rock", "Paper", "Scissors"];
+            const randomIndex = Math.floor(Math.random() * choices.length);
+            return choices[randomIndex];
+        }
+
+        function resetGame() {
+            userScore = 0;
+            aiScore = 0;
+            draws = 0;
+            gameOver = false;
+
+            document.getElementById("userScore").textContent = "0";
+            document.getElementById("aiScore").textContent = "0";
+            document.getElementById("draws").textContent = "0";
+            document.getElementById("results-message").textContent = "";
+            document.getElementById("playAgainBtn").style.display = "none";
+        }
+    </script>
+</body>
+</html>
